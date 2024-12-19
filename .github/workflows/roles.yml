@@ -1,0 +1,42 @@
+---
+
+name: generate
+on:
+  push:
+
+jobs:
+  roles:
+    name: role
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - role: ansible-role-default
+          - role: ansible-role-preferences
+          - role: ansible-role-minimal
+          - role: ansible-role-version
+          - role: ansible-role-default
+            generate_config_file: generate_config_only_readme.yml
+          - role: ansible-role-default
+            generate_config_file: generate_config_no_tox.yml
+          - role: ansible-role-default
+            generate_config_file: generate_config_no_pre_commit.yml
+          - role: ansible-role-default
+            generate_config_file: generate_config_no_gitlab.yml
+          - role: ansible-role-default
+            generate_config_file: generate_config_no_github.yml
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - run: |
+          pip install pre-commit
+          cd tests/${{ matrix.config.role }}
+          if [ -f "${{ matrix.config.generate_config_file }}" ]; then
+            echo "Testing generating files defined in ${{ matrix.config.generate_config_file }}."
+            ../../generate.yml --extra-vars @${{ matrix.config.generate_config_file }}
+          else
+            echo "Testing generating all default files."
+            ../../generate.yml
+          fi

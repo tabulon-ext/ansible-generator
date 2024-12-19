@@ -1,47 +1,43 @@
 ---
 # Setting to generate files.
 
-# Settings to Docker containers.
-docker_namespace: robertdebock
-docker_image: fedora
-docker_tag: latest
+# A list of python version to test.
+default_python_version:
+  - "python:3.9"
+  - "python:3.10"
+  - "python:3.13"
 
-# References to travis use a namespace, this is likely your username on Travis.
-travis_namespace: robertdebock
-
-# Documentation refers to Ansible Galaxy. this is likely your username on Galaxy.
-galaxy_namespace: robertdebock
-
-# Your username/organization name on GitHub.
-github_namespace: robertdebock
-
-# Your name and optionally email-address.
-author: Robert de Bock (robert@meinit.nl)
-
-# The full URL to your website.
-author_website: "https://robertdebock.nl/"
-
+# A map that relates the `meta/main.yml` - `galaxy_info.platforms.name` to a name of a container.
 platform_image_mapping:
   Alpine: alpine
   Amazon: amazonlinux
   Archlinux: archlinux
   Debian: debian
-  EL: "{{ enterprise_linux | default('enterpriselinux') }}"
+  EL: enterpriselinux
   Fedora: fedora
-  OpenSUSE: opensuse
+  opensuse: opensuse
   Ubuntu: ubuntu
 
+# A map that relates a container name to the URL of that container on Docker Hub.
+image_docker_hub_url_mapping:
+  alpine: "https://hub.docker.com/r/{{ docker_namespace }}/alpine"
+  amazon: "https://hub.docker.com/r/{{ docker_namespace }}/amazonlinux"
+  archlinux: "https://hub.docker.com/r/{{ docker_namespace }}/archlinux"
+  debian: "https://hub.docker.com/r/{{ docker_namespace }}/debian"
+  el: "https://hub.docker.com/r/{{ docker_namespace }}/enterpriselinux"
+  fedora: "https://hub.docker.com/r/{{ docker_namespace }}/fedora"
+  opensuse: "https://hub.docker.com/r/{{ docker_namespace }}/opensuse"
+  ubuntu: "https://hub.docker.com/r/{{ docker_namespace }}/ubuntu"
+
 # This maps the Galaxy distribution and version to Docker images.
+# A map that relates the `meta/main.yml` - `galaxy_info.platforms.versions` to the tag of the Docker container.
 distribution_version_mapping:
   Alpine:
     all:
       - latest
   Amazon:
     all:
-      - 1
       - latest
-    2018.03:
-      - 1
     Candidate:
       - latest
   Archlinux:
@@ -49,46 +45,47 @@ distribution_version_mapping:
       - latest
   Debian:
     all:
-      - latest
-      - bookworm
+      - latest  # 12
+      - bullseye  # 11
     bullseye:
-      - latest
+      - bullseye
     bookworm:
-      - bookworm
+      - latest
+    buster:
+      - buster
   EL:
     all:
-      - 7
       - latest
-    7:
-      - 7
-    8:
+    "9":
       - latest
   Fedora:
     all:
-      - 34
+      - 40
       - latest
       - rawhide
-    34:
-      - 34
-    35:
+    "38":
+      - 38
+    "39":
+      - 39
+    "40":
+      - 40
+    "41":
       - latest
-    36:
+    "42":
       - rawhide
-  OpenSUSE:
-    all:
-      - latest
   Ubuntu:
     all:
+      - latest  # 24
+      - jammy  # 22
+      - focal  # 20
+    noble:
       - latest
-      - focal
-      - bionic
     jammy:
-      - latest
+      - jammy
     focal:
       - focal
-    bionic:
-      - bionic
 
+# To schedule CI on different days of the month, this is a map that relates a letter to a day of the month.
 letter_day_mapping:
   a: 1
   b: 2
@@ -116,17 +113,18 @@ letter_day_mapping:
   x: 24
   y: 25
   z: 26
-  0: 27
-  1: 27
-  2: 27
-  3: 27
-  4: 27
-  5: 27
-  6: 27
-  7: 27
-  8: 27
-  9: 27
+  "0": 27
+  "1": 27
+  "2": 27
+  "3": 27
+  "4": 27
+  "5": 27
+  "6": 27
+  "7": 27
+  "8": 27
+  "9": 27
 
+# To schedule CI on different hours of the day, this is a map that relates a letter to an hour of the day.
 letter_hour_mapping:
   a: 1
   b: 2
@@ -154,17 +152,18 @@ letter_hour_mapping:
   x: 22
   y: 22
   z: 22
-  0: 23
-  1: 23
-  2: 23
-  3: 23
-  4: 23
-  5: 23
-  6: 23
-  7: 23
-  8: 23
-  9: 23
+  "0": 23
+  "1": 23
+  "2": 23
+  "3": 23
+  "4": 23
+  "5": 23
+  "6": 23
+  "7": 23
+  "8": 23
+  "9": 23
 
+# To schedule CI on different days of the month, this is a map that relates a letter to a minute of the hour.
 letter_minute_mapping:
   a: 1
   b: 3
@@ -192,13 +191,13 @@ letter_minute_mapping:
   x: 47
   y: 49
   z: 51
-  0: 53
-  1: 55
-  2: 57
-  3: 59
-  4: 59
-  5: 59
-  6: 59
-  7: 59
-  8: 59
-  9: 59
+  "0": 53
+  "1": 55
+  "2": 57
+  "3": 59
+  "4": 59
+  "5": 59
+  "6": 59
+  "7": 59
+  "8": 59
+  "9": 59

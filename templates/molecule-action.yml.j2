@@ -5,8 +5,8 @@ name: Ansible Molecule
 
 on:
   push:
-    tags_ignore:
-      - '*'
+    branches:
+      - master
   pull_request:
   schedule:
     - cron: '{{ letter_minute_mapping[role_name[0]] }} {{ letter_hour_mapping[role_name[0]] }} {{ letter_day_mapping[role_name[0]] }} * *'
@@ -16,43 +16,61 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-        with:
-          path: {% raw %}"${{ github.repository }}"{% endraw %}
+        uses: actions/checkout@v4
+      - name: ansible-lint
+        uses: ansible-community/ansible-lint-action@main
+{% for python_version in default_python_version %}
 
-      - name: molecule
-        uses: robertdebock/molecule-action@4.0.7
-        with:
-          command: lint
-  test:
+  {{ python_version | replace('.', '-') | replace(':', '-') }}:
     needs:
       - lint
     runs-on: ubuntu-20.04
+    container:
+      image: {{ python_version }}
     strategy:
       fail-fast: false
       matrix:
         config:
 {% for platform in meta.galaxy_info.platforms %}
 {% for version in platform.versions %}
+{% if matrix_overrides is defined %}
+{% if matrix_overrides[platform_image_mapping[platform.name]] is defined %}
+{% for override_python_version in matrix_overrides[platform_image_mapping[platform.name]]["python"] %}
+{% if override_python_version == python_version %}
 {% for tag in distribution_version_mapping[platform.name][version] %}
           - image: "{{ platform_image_mapping[platform.name] }}"
             tag: "{{ tag }}"
 {% endfor %}
+{% endif %}
+{% endfor %}
+{% else %}
+{% for tag in distribution_version_mapping[platform.name][version] %}
+          - image: "{{ platform_image_mapping[platform.name] }}"
+            tag: "{{ tag }}"
+{% endfor %}
+{% endif %}
+{% endif %}
 {% endfor %}
 {% endfor %}
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-        with:
-          path: {% raw %}"${{ github.repository }}"{% endraw %}
+        uses: actions/checkout@v4
 
-      - name: disable apparmor for mysql
-        run: sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
-      - name: parse apparmor for mysql
-        run: sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
       - name: molecule
-        uses: robertdebock/molecule-action@4.0.7
-        with:
+        run: |
+          apt-get update -qq
+          apt-get -y -qq install yamllint docker.io
+          pip install --no-cache-dir tox
+          if [ -f tox.ini ] ; then tox ; fi
+          if [ ! -f tox.ini ] ; then pip install -r requirements.yml ; pip install ansible-lint ansible-core ; molecule test ; fi
+        env:
           image: {% raw %}${{ matrix.config.image }}{% endraw %}
 
           tag: {% raw %}${{ matrix.config.tag }}{% endraw %}
+{% if github_variables_mapping is defined %}
+
+{% for item in github_variables_mapping %}
+          {{ item.variable }}: {% raw %}${{ {%endraw %}{{ item.name }} {% raw %}}}{% endraw %}
+{% endfor %}
+{% endif %}
+{% endfor %}

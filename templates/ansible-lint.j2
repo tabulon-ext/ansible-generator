@@ -1,22 +1,21 @@
 ---
 {{ ansible_managed | comment }}
-{% if versionymlstat.stat.exists or preferencesymlstat.stat.exists or verify.stat.exists %}
+{% if preferencesymlstat.stat.exists or verify.stat.exists %}
 exclude_paths:
-{% if versionymlstat.stat.exists %}
-  - ./meta/version.yml
-{% endif %}
 {% if preferencesymlstat.stat.exists %}
-  - ./meta/preferences.yml
+  - meta/preferences.yml
 {% endif %}
-  - ./molecule/default/prepare.yml
-  - ./molecule/default/converge.yml
+  - molecule/default/prepare.yml
+  - molecule/default/converge.yml
 {% if verify.stat.exists %}
-  - ./molecule/default/verify.yml
-{% endif %}
-{% if defaults.stat.exists %}
-  - ./molecule/default/defaults.yml
+  - molecule/default/verify.yml
 {% endif %}
 {% endif %}
-  - ./molecule/default/collections.yml
-  - ./.tox
-  - ./.cache
+  - molecule/default/collections.yml
+  - .tox
+  - .cache
+  - .github
+  - requirements.yml
+
+enable_list:
+  - name[prefix]

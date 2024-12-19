@@ -1,0 +1,55 @@
+---
+
+# Settings to Docker containers.
+docker_namespace: robertdebock
+docker_image: fedora
+docker_tag: latest
+
+# Your username on Galaxy.
+galaxy_namespace: robertdebock
+
+# Your username/organization name on GitHub.
+github_namespace: robertdebock
+
+# Your username/group on GitLab.
+gitlab_namespace: robertdebock-iac
+
+# Your name and optionally email-address.
+author: Robert de Bock (robert@meinit.nl)
+
+# The full URL to your website.
+author_website: "https://robertdebock.nl/"
+
+# The container to use for GitLab CI.
+gitlab_container: "robertdebock/github-action-molecule:6.0.1"
+
+# The molecule action to use.
+molecule_action: "robertdebock/molecule-action@6.0.1"
+
+# Would you like to add a sponsor message?
+sponsored_message: yes
+
+# A custom message can be placed with this content.
+custom_message: "Also see a [full explanation and example](https://robertdebock.nl/how-to-use-these-roles.html) on how to use these roles."
+
+# The below settings determine what the generator will generate.
+generate_gitignore: yes
+generate_yamllint: yes
+generate_pre_commit: yes
+generate_readme: yes
+generate_ansible_lint: yes
+generate_tox: yes
+generate_github_settings: yes
+generate_license: yes
+generate_security: yes
+generate_molecule: yes
+generate_contributing: yes
+generate_github_action_molecule: yes
+generate_github_action_galaxy: yes
+generate_github_action_todo: yes
+generate_gitlab_ci: yes
+generate_requirements2png: yes
+generate_github_funding: yes
+generate_github_issue_template: yes
+generate_github_feature_template: yes
+generate_install_pre_commit: yes
